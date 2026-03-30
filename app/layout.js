@@ -1,5 +1,6 @@
 // 发现一个现象: 如果删掉 app/layout.js 的话
 
+import Logo from "./components/Logo";
 import Navigation from "./components/Navigation";
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
@@ -14,7 +15,10 @@ export default function Layout({ children }) {
   return (
     <html>
       <body>
-        <Navigation />
+        <header>
+          <Logo />
+          <Navigation />
+        </header>
         <main>{children}</main>
       </body>
     </html>
