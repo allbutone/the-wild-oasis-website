@@ -3,7 +3,6 @@ import Navigation from "./components/Navigation";
 export default function Page() {
   return (
     <>
-      <Navigation />
       <h1>Home page</h1>
     </>
   );
