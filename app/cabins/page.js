@@ -20,7 +20,11 @@ export default async function Page() {
   return (
     <>
       <h2>cabin page!</h2>
-      <Counter />
+
+      {/* server component Page 通过 props 将数据传递给 client component Counter */}
+      {/* 测试如下: */}
+      <Counter users={users} />
+
       <ul>
         {users.map((u) => (
           <li key={u.id}>{u.name}</li>
