@@ -1,7 +1,8 @@
-// 发现一个现象: 如果删掉 app/layout.js 的话
-
 import Logo from "./_components/Logo";
 import Navigation from "./_components/Navigation";
+
+// import tailwind css file in order to use it.
+import '@/app/_styles/globals.css';
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
 // nextjs 会默认使用 exported variable 'metadata' 来生成 <head>
