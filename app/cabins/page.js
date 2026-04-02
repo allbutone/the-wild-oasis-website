@@ -1,7 +1,7 @@
 // localhost:3000/ 对应 app/page.js 里的 default export component
 // localhost:3000/foo 对应 app/foo/page.js 里的 default export component
 
-import Counter from "../components/Counter";
+import Counter from "../_components/Counter";
 
 // localhost:3000/foo/bar 对应 app/foo/bar/page.js 里的 default export component
 export default async function Page() {

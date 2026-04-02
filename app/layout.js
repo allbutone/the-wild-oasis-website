@@ -1,7 +1,7 @@
 // 发现一个现象: 如果删掉 app/layout.js 的话
 
-import Logo from "./components/Logo";
-import Navigation from "./components/Navigation";
+import Logo from "./_components/Logo";
+import Navigation from "./_components/Navigation";
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
 // nextjs 会默认使用 exported variable 'metadata' 来生成 <head>
@@ -19,6 +19,9 @@ export default function Layout({ children }) {
           <Logo />
           <Navigation />
         </header>
+        {/* layout.js 负责将 target page 的内容加载到 children 里 */}
+        {/* 在加载过程中, 会先使用 loading.js 的内容作为 children */}
+        {/* 实测发现: sub route 的 loading.js 会优先于 route 的 loading.js */}
         <main>{children}</main>
       </body>
     </html>
