@@ -15,7 +15,7 @@ export const metadata = {
 export default function Layout({ children }) {
   return (
     <html>
-      <body>
+      <body className="bg-primary-950 text-primary-100 min-h-screen">
         <header>
           <Logo />
           <Navigation />
