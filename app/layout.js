@@ -2,13 +2,22 @@ import Logo from "./_components/Logo";
 import Navigation from "./_components/Navigation";
 
 // import tailwind css file in order to use it.
-import '@/app/_styles/globals.css';
+import "@/app/_styles/globals.css";
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
 // nextjs 会默认使用 exported variable 'metadata' 来生成 <head>
 // 具体参考: https://nextjs.org/docs/app/getting-started/metadata-and-og-images
 export const metadata = {
-  title: "the wild oasis website",
+  // title: "the wild oasis website",
+  title: {
+    // template 中的 %s 表示 child route 所定义的 metadata.title
+    // template 仅对 child route 有效, 对 current route 无效
+    // template 定义在 layout.js 中有效, 定义在 page.js 中无效, 因为 layout.js 下才有 child route, 而 page.js 下没有 child route
+    template: "%s | the wild oasis website",
+    // 如果定义了 template, 就必须定义 default
+    // 如果 target page 没有定义 metadata.title, 其 title 默认为这里的 default
+    default: "the wild oasis website",
+  },
 };
 
 // 原本不会导致 hard reload 的 <Link /> 实际却触发了 hard reload
