@@ -18,6 +18,9 @@ export const metadata = {
     // 如果 target page 没有定义 metadata.title, 其 title 默认为这里的 default
     default: "the wild oasis website",
   },
+  // 对应 <meta name="description" content="your_description_here" />
+  // 会成为 current page / child page 的 description
+  description: "this is the description of the wild oasis website",
 };
 
 // 原本不会导致 hard reload 的 <Link /> 实际却触发了 hard reload
