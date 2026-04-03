@@ -1,8 +1,16 @@
-import Logo from "./_components/Logo";
-import Navigation from "./_components/Navigation";
-
 // import tailwind css file in order to use it.
 import "@/app/_styles/globals.css";
+
+import Logo from "./_components/Logo";
+import Navigation from "./_components/Navigation";
+import { Josefin_Sans } from "next/font/google";
+
+// Josefin_Sans 是以 font name 命名的 function:
+const josefin = Josefin_Sans({
+  subsets: ['latin'], // 只要字体中的 latin 字符集, 可以显著减少 font 的 bundle size
+  display: 'swap', // 当加载 target font 'Josefin_sans' 时, 先展示 default font 作为 fallback
+})
+console.log(josefin);// 查看结构
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
 // nextjs 会默认使用 exported variable 'metadata' 来生成 <head>
@@ -24,14 +32,14 @@ export const metadata = {
 
   // code-based metadata(如下) 优先于 file-based metadata (在 app 下的 icon.png)
   icons: {
-    icon: '/logo_babyshark.png',
-  }
+    icon: "/logo_babyshark.png",
+  },
 };
 
 // 原本不会导致 hard reload 的 <Link /> 实际却触发了 hard reload
 export default function Layout({ children }) {
   return (
-    <html>
+    <html className={josefin.className}>
       <body className="bg-primary-950 text-primary-100 min-h-screen">
         <header>
           <Logo />
