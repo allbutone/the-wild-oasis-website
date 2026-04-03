@@ -21,6 +21,11 @@ export const metadata = {
   // 对应 <meta name="description" content="your_description_here" />
   // 会成为 current page / child page 的 description
   description: "this is the description of the wild oasis website",
+
+  // code-based metadata(如下) 优先于 file-based metadata (在 app 下的 icon.png)
+  icons: {
+    icon: '/logo_babyshark.png',
+  }
 };
 
 // 原本不会导致 hard reload 的 <Link /> 实际却触发了 hard reload
