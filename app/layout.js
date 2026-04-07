@@ -1,16 +1,8 @@
 // import tailwind css file in order to use it.
 import "@/app/_styles/globals.css";
 
-import Logo from "./_components/Logo";
-import Navigation from "./_components/Navigation";
 import { Josefin_Sans } from "next/font/google";
-
-// Josefin_Sans 是以 font name 命名的 function:
-const josefin = Josefin_Sans({
-  subsets: ['latin'], // 只要字体中的 latin 字符集, 可以显著减少 font 的 bundle size
-  display: 'swap', // 当加载 target font 'Josefin_sans' 时, 先展示 default font 作为 fallback
-})
-console.log(josefin);// 查看结构
+import Header from "./_components/Header";
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
 // nextjs 会默认使用 exported variable 'metadata' 来生成 <head>
@@ -36,19 +28,23 @@ export const metadata = {
   },
 };
 
-// 原本不会导致 hard reload 的 <Link /> 实际却触发了 hard reload
+// Josefin_Sans 是以 font name 命名的 function:
+const josefin = Josefin_Sans({
+  subsets: ["latin"], // 只要字体中的 latin 字符集, 可以显著减少 font 的 bundle size
+  display: "swap", // 当加载 target font 'Josefin_sans' 时, 先展示 default font 作为 fallback
+});
+console.log(josefin); // 查看结构
 export default function Layout({ children }) {
   return (
     <html className={josefin.className}>
-      <body className="bg-primary-950 text-primary-100 min-h-screen">
-        <header>
-          <Logo />
-          <Navigation />
-        </header>
+      <body className="antialiased bg-primary-950 text-primary-100 min-h-screen flex flex-col">
+        <Header />
         {/* layout.js 负责将 target page 的内容加载到 children 里 */}
         {/* 在加载过程中, 会先使用 loading.js 的内容作为 children */}
         {/* 实测发现: sub route 的 loading.js 会优先于 route 的 loading.js */}
-        <main>{children}</main>
+        <div className="flex-1 px-8 py-12">
+          <main className="max-w-7xl mx-auto bg-red-500">{children}</main>
+        </div>
       </body>
     </html>
   );
