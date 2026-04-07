@@ -2,7 +2,7 @@
 const nextConfig = {
   /* config options here */
   images: {
-    qualities: [1, 100],
+    qualities: [25, 50, 75, 100],
   }
 };
 

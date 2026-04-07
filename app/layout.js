@@ -43,7 +43,7 @@ export default function Layout({ children }) {
         {/* 在加载过程中, 会先使用 loading.js 的内容作为 children */}
         {/* 实测发现: sub route 的 loading.js 会优先于 route 的 loading.js */}
         <div className="flex-1 px-8 py-12">
-          <main className="max-w-7xl mx-auto bg-red-500">{children}</main>
+          <main className="max-w-7xl mx-auto">{children}</main>
         </div>
       </body>
     </html>
