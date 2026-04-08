@@ -1,14 +1,33 @@
+import CabinCard from "../_components/CabinCard";
+
 export const metadata = {
-  title: 'cabins',
-}
-export default async function Page() {
-  // 故意添加如下代码, 增加 server component 'Page' 的渲染时间, 以便观察 loading.js 是否生效
-  // await new Promise((resolve, reject) => {
-  //   setTimeout(resolve, 3000)
-  // });
+  title: "cabins",
+};
+export default function Page() {
+  // CHANGE
+  const cabins = [];
+
   return (
-    <>
-      <h2>cabin page!</h2>
-    </>
+    <div>
+      <h1 className="text-4xl mb-5 text-accent-400 font-medium">
+        Our Luxury Cabins
+      </h1>
+      <p className="text-primary-200 text-lg mb-10">
+        Cozy yet luxurious cabins, located right in the heart of the Italian
+        Dolomites. Imagine waking up to beautiful mountain views, spending your
+        days exploring the dark forests around, or just relaxing in your private
+        hot tub under the stars. Enjoy nature&apos;s beauty in your own little home
+        away from home. The perfect spot for a peaceful, calm vacation. Welcome
+        to paradise.
+      </p>
+
+      {cabins.length > 0 && (
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 xl:gap-14">
+          {cabins.map((cabin) => (
+            <CabinCard cabin={cabin} key={cabin.id} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
