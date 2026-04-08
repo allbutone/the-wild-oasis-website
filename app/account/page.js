@@ -4,7 +4,7 @@ export const metadata = {
 export default function Page() {
   return (
     <>
-      <h2>account page</h2>
+      <h2>content of route '/account'</h2>
     </>
   );
 }
