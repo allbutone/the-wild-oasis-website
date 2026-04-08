@@ -61,7 +61,7 @@ export default function Layout({ children }) {
 
           object-position 指定填充前的对齐方式, 例如 `top` 表示先将 Image top 和 container (main) top 对齐, 然后再按 object-fit 进行填充
         */}
-        <Image src={bg} alt="Mountains and forests with two cabins" fill className="object-cover object-top" />
+        <Image src={bg} alt="Mountains and forests with two cabins" fill className="object-cover object-top" placeholder="blur"/>
 
         <Header />
         <div className="flex-1 px-8 py-12">
