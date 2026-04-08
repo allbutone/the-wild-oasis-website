@@ -1,6 +1,10 @@
-export default function loading() {
-  return (
-  <h2>cabins loading...</h2>
-  )
-}
+import Spinner from "../_components/Spinner";
 
+export default function Loading() {
+  return (
+    <div className="grid justify-center items-center">
+      <Spinner />
+      <p className="text-xl text-primary-200">loading cabins...</p>
+    </div>
+  );
+}

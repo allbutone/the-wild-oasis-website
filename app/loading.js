@@ -1,8 +1,8 @@
+import Spinner from "./_components/Spinner";
+
 export default function loading() {
   return (
-    <p>
-      target page loading...
-    </p>
+    <Spinner />
   )
 }
 
