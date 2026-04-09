@@ -46,6 +46,9 @@ export const getCabins = async function () {
     throw new Error('Cabins could not be loaded');
   }
 
+  // 故意延迟 data return timing, 以便测试 Suspense fallback 是否生效
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
+
   return data;
 };
 
