@@ -1,13 +1,14 @@
 import { getCabin } from "@/app/_lib/data-service";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params, searchParams }) {
   // const { cabinId } = params;
   // 上述 destruction 会报错:
   // Error: Route "/cabins/[cabinId]" used `params.cabinId`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
   // 因为 params 是一个 promise, 需要这样使用:
-  const {cabinId} = await params;
+  const { cabinId } = await params;
 
   return {
     title: `cabin-${cabinId}`,
@@ -26,8 +27,16 @@ export default async function Page({ params }) {
   // 查看 params 的结构:
   console.log("resolved params:", resolvedParams); // resolved params: { cabinId: '67' }
 
+  const cabin = await getCabin(resolvedParams.cabinId);
+  if (!cabin) {
+    // 执行 notFound() 会抛出 NEXT_HTTP_ERROR_FALLBACK;404 error
+    // 导致该 error 的 route segment 会停止 rendering
+    // 转而 render `not-found file` 的内容
+    // 也就是说: 执行 notFound() 后, 会展示 not-found.js 的内容
+    notFound(); 
+  }
   const { id, name, maxCapacity, regularPrice, discount, image, description } =
-    await getCabin(resolvedParams.cabinId);
+    cabin;
 
   return (
     <div className="max-w-6xl mx-auto mt-8">
