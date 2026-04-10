@@ -2,6 +2,17 @@ import { getCabin } from "@/app/_lib/data-service";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
+export async function generateMetadata({ params, searchParams }) {
+  // const { cabinId } = params;
+  // 上述 destruction 会报错:
+  // Error: Route "/cabins/[cabinId]" used `params.cabinId`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+  // 因为 params 是一个 promise, 需要这样使用:
+  const {cabinId} = await params;
+
+  return {
+    title: `cabin-${cabinId}`,
+  };
+}
 export default async function Page({ params }) {
   // 在 nextjs v15 之前, 可以直接使用 params 的 property 如下:
   // const cabin = await getCabin(params.id);
@@ -13,7 +24,7 @@ export default async function Page({ params }) {
   // 这是因为: params 不再是一个 object 而是 promise, 只能先 resolve 再 destruct:
   const resolvedParams = await params;
   // 查看 params 的结构:
-  console.log('resolved params:', resolvedParams); // resolved params: { cabinId: '67' }
+  console.log("resolved params:", resolvedParams); // resolved params: { cabinId: '67' }
 
   const { id, name, maxCapacity, regularPrice, discount, image, description } =
     await getCabin(resolvedParams.cabinId);
@@ -22,7 +33,12 @@ export default async function Page({ params }) {
     <div className="max-w-6xl mx-auto mt-8">
       <div className="grid grid-cols-[3fr_4fr] gap-20 border border-primary-800 py-3 px-10 mb-24">
         <div className="relative scale-[1.15] -translate-x-3">
-          <Image fill className="object-cover" src={image} alt={`Cabin ${name}`} />
+          <Image
+            fill
+            className="object-cover"
+            src={image}
+            alt={`Cabin ${name}`}
+          />
         </div>
 
         <div>
