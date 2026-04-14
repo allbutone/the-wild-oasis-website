@@ -1,7 +1,16 @@
-import { getCabin } from "@/app/_lib/data-service";
+import { getCabin, getCabins } from "@/app/_lib/data-service";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+
+export async function generateStaticParams() {
+  const cabins = await getCabins();
+
+  // [paramsObj, paramsObj...]
+  // 其中 paramsObj.cabinId 对应 route segment 'cabinId'
+  // param 是 string, 实际获取到的 cabinId 是 number, 需要做转换, 否则 build 会报错
+  return cabins.map((c) => ({ cabinId: String(c.id )})); 
+}
 
 export async function generateMetadata({ params, searchParams }) {
   // const { cabinId } = params;
@@ -33,7 +42,7 @@ export default async function Page({ params }) {
     // 导致该 error 的 route segment 会停止 rendering
     // 转而 render `not-found file` 的内容
     // 也就是说: 执行 notFound() 后, 会展示 not-found.js 的内容
-    notFound(); 
+    notFound();
   }
   const { id, name, maxCapacity, regularPrice, discount, image, description } =
     cabin;
@@ -46,7 +55,7 @@ export default async function Page({ params }) {
             fill
             className="object-cover"
             src={image}
-            alt={`Cabin ${fullName}`}
+            alt={`Cabin ${name}`}
           />
         </div>
 
