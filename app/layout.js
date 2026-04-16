@@ -33,7 +33,7 @@ const josefin = Josefin_Sans({
   subsets: ["latin"], // 只要字体中的 latin 字符集, 可以显著减少 font 的 bundle size
   display: "swap", // 当加载 target font 'Josefin_sans' 时, 先展示 default font 作为 fallback
 });
-console.log(josefin); // 查看结构
+// console.log(josefin); // 查看结构
 export default function Layout({ children }) {
   return (
     <html>

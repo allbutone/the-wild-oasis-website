@@ -34,7 +34,7 @@ export default async function Page({ params }) {
   // 这是因为: params 不再是一个 object 而是 promise, 只能先 resolve 再 destruct:
   const resolvedParams = await params;
   // 查看 params 的结构:
-  console.log("resolved params:", resolvedParams); // resolved params: { cabinId: '67' }
+  // console.log("resolved params:", resolvedParams); // resolved params: { cabinId: '67' }
 
   const cabin = await getCabin(resolvedParams.cabinId);
   if (!cabin) {

@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "ssr": "next build && next start",
+    "ssg": "next build && npx serve@latest out",
     "lint": "eslint"
   },
   "dependencies": {
