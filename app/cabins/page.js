@@ -20,7 +20,7 @@ export const metadata = {
 // export const revalidate=60
 
 export default async function Page() {
-  cacheLife("minutes");
+  cacheLife("minutes");//必须在声明了 'use cache' 的 function 内执行
 
   return (
     <div>

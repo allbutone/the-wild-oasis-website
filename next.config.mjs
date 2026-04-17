@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // enable 'use cache' introduced since Next.js v15
+  // 一旦 cacheComponents 设置为 true, 就不能再使用 v15 之前的 revalidate 配置方式了, 否则会报错:
+  // "Route segment config "revalidate" is not compatible with `nextConfig.cacheComponents`. Please remove it."
   cacheComponents: true,
 
   // key 'output' 支持的值:

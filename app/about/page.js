@@ -1,12 +1,25 @@
+"use cache";
+
 import about1 from "@/public/about-1.jpg";
 import about2 from "@/public/about-2.jpg";
 import Image from "next/image";
+import { getCabins } from "../_lib/data-service";
+import { cacheLife } from "next/cache";
 
 export const metadata = {
   title: "about",
 };
 
-export default function Page() {
+export default async function Page() {
+  // 每小时后需要 first request 触发更新(因为 cabins 变化并不频繁, 所以将 1 小时作为更新间隔比较合理)
+  // output 设置为 undefined / 'standalone' 后, 执行 npm run build && npm run start 进入 production mode
+  // 在 browser devtools 的 tab 'network' 里观察 '/about' 的 response header, 会发现:
+  // Cache-Control 的值为 "s-maxage=3600, stale-while-revalidate=82800"
+  // 其中 s-maxage=3600 说明 cache profile 'hours'
+  cacheLife('hours');
+
+  const cabins = await getCabins();
+
   return (
     <div className="grid grid-cols-5 gap-x-24 gap-y-32 text-lg items-center">
       <div className="col-span-3">
@@ -23,10 +36,10 @@ export default function Page() {
             and enjoying simple pleasures with family.
           </p>
           <p>
-            Our 8 luxury cabins provide a cozy base, but the real freedom and
-            peace you&apos;ll find in the surrounding mountains. Wander through
-            lush forests, breathe in the fresh air, and watch the stars twinkle
-            above from the warmth of a campfire or your hot tub.
+            Our&nbsp;{cabins.length}&nbsp;luxury cabins provide a cozy base, but the real
+            freedom and peace you&apos;ll find in the surrounding mountains.
+            Wander through lush forests, breathe in the fresh air, and watch the
+            stars twinkle above from the warmth of a campfire or your hot tub.
           </p>
           <p>
             This is where memorable moments are made, surrounded by
