@@ -1,3 +1,4 @@
+import TextExpander from "@/app/_components/TextExpander";
 import { getCabin, getCabins } from "@/app/_lib/data-service";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
@@ -9,7 +10,7 @@ export async function generateStaticParams() {
   // [paramsObj, paramsObj...]
   // 其中 paramsObj.cabinId 对应 route segment 'cabinId'
   // param 是 string, 实际获取到的 cabinId 是 number, 需要做转换, 否则 build 会报错
-  return cabins.map((c) => ({ cabinId: String(c.id )})); 
+  return cabins.map((c) => ({ cabinId: String(c.id) }));
 }
 
 export async function generateMetadata({ params, searchParams }) {
@@ -64,7 +65,9 @@ export default async function Page({ params }) {
             Cabin {name}
           </h3>
 
-          <p className="text-lg text-primary-300 mb-10">{description}</p>
+          <p className="text-lg text-primary-300 mb-10">
+            <TextExpander>{description}</TextExpander>
+          </p>
 
           <ul className="flex flex-col gap-4 mb-7">
             <li className="flex gap-3 items-center">
