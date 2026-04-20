@@ -1,3 +1,4 @@
+import Logo from "@/app/_components/Logo";
 import TextExpander from "@/app/_components/TextExpander";
 import { getCabin, getCabins } from "@/app/_lib/data-service";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
@@ -68,6 +69,11 @@ export default async function Page({ params }) {
           <p className="text-lg text-primary-300 mb-10">
             <TextExpander>{description}</TextExpander>
           </p>
+
+          {/* Logo 没有显式标注 'use client' 'use server', 那么: */}
+          {/* 如果在 client context 内 import <Logo /> 的话, Logo 就是 client component */}
+          {/* 如果在 server context 内 import <Logo /> 的话, Logo 就是 server component */}
+          {/* <Logo /> */}
 
           <ul className="flex flex-col gap-4 mb-7">
             <li className="flex gap-3 items-center">
