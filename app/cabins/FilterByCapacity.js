@@ -2,7 +2,6 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // filter cabins 是 client side 行为
-
 export default function FilterByCapacity() {
   // read current search params
   const searchParams = useSearchParams();

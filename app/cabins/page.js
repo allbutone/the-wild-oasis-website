@@ -41,7 +41,15 @@ export default async function Page({params, searchParams}) {
       <div className="flex justify-end mb-5">
         <FilterByCapacity />
       </div>
-      <Suspense fallback={<Spinner />}>
+      {/* 注意1: */}
+      {/* 点击 FilterByCapacity 中的 button 会执行 router.replace(newUrl) 导致 oldUrl -> newUrl, 这个 url state change 对应一次 navigation */}
+      {/* 在 app router 中, 所有 navigation 都被包裹在 react startTransition 内, 这意味着: 在 navigation 完成之前, all state update 都将被视为 transition */}
+      {/* 注意2: */}
+      {/* url state 发生变化后, nextjs client runtime 会请求 nextjs server runtime 获取 server component Page 的 re-render result (payload) */}
+      {/* 当 react 拿到 payload 后, 开始基于 working tree 执行 reconcil diff 生成 working tree, 在这个过程中遇到包裹着 Suspense 的 CabinList: */}
+      {/* - Suspense 未指定 key, react 会直接复用该 Suspense, 其内的 CabinList 已经是 mounted 状态, 只需 react 从 payload 中拿 CabinList 对应的内容 hydrate 即可(这个过程不会 throw promise, 也就不会触发 fallback) */}
+      {/* - Suspense 指定了 key, react 会卸载 old Suspense, 并创建 new Suspense, 其内的 CabinList 在 mount 时会 throw promise, 导致触发 Suspense 的 fallback */}
+      <Suspense fallback={<Spinner />} key={capacityType}>
         <CabinList capacityType={capacityType ?? 'all'} />
       </Suspense>
     </div>
