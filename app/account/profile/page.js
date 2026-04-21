@@ -1,7 +1,8 @@
+import CountrySelector from "@/app/_components/CountrySelector";
 import SelectCountry from "@/app/_components/SelectCountry";
 
 export const metadata = {
-  title: 'profile page'
+  title: "profile page",
 };
 export default function Page() {
   // CHANGE
@@ -46,12 +47,20 @@ export default function Page() {
             />
           </div>
 
-          <SelectCountry
-            name="nationality"
-            id="nationality"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-            defaultCountry={nationality}
-          />
+          {/* 前提:  */}
+          {/* CountrySelector 是 client component */}
+          {/* SelectCountry 是 server component */}
+          {/* 验证: */}
+          {/* client component 不能 import server component */}
+          {/* 但是 client component 可以组合 server component (通过 props) */}
+          <CountrySelector>
+            <SelectCountry
+              name="nationality"
+              id="nationality"
+              className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+              defaultCountry={nationality}
+            />
+          </CountrySelector>
         </div>
 
         <div className="space-y-2">
