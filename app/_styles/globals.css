@@ -8,28 +8,28 @@
 /* 在 tailwind v4 中, 调整色系, 方式二: */
 /* 直接在 css file 中通过 @theme 调整, 如下: */
 @theme {
-  --color-primary-50: #E1E8EF;
-  --color-primary-100: #D4DEE7;
-  --color-primary-200: #B7C7D7;
-  --color-primary-300: #99B0C7;
-  --color-primary-400: #7C99B6;
-  --color-primary-500: #5E82A6;
-  --color-primary-600: #4C6B8A;
-  --color-primary-700: #3C546C;
-  --color-primary-800: #2C3D4F;
-  --color-primary-900: #1B2631;
-  --color-primary-950: #141C24;
+  --color-primary-50: #e1e8ef;
+  --color-primary-100: #d4dee7;
+  --color-primary-200: #b7c7d7;
+  --color-primary-300: #99b0c7;
+  --color-primary-400: #7c99b6;
+  --color-primary-500: #5e82a6;
+  --color-primary-600: #4c6b8a;
+  --color-primary-700: #3c546c;
+  --color-primary-800: #2c3d4f;
+  --color-primary-900: #1b2631;
+  --color-primary-950: #141c24;
 
-  --color-accent-50: #FAF5F0;
-  --color-accent-100: #F4ECE1;
-  --color-accent-200: #E8D6BF;
-  --color-accent-300: #DDC2A2;
-  --color-accent-400: #D2AF84;
-  --color-accent-500: #C69963;
-  --color-accent-600: #B78343;
+  --color-accent-50: #faf5f0;
+  --color-accent-100: #f4ece1;
+  --color-accent-200: #e8d6bf;
+  --color-accent-300: #ddc2a2;
+  --color-accent-400: #d2af84;
+  --color-accent-500: #c69963;
+  --color-accent-600: #b78343;
   --color-accent-700: #926835;
-  --color-accent-800: #6C4D28;
-  --color-accent-900: #4B351B;
+  --color-accent-800: #6c4d28;
+  --color-accent-900: #4b351b;
   --color-accent-950: #382814;
 }
 
@@ -62,9 +62,25 @@
 }
 
 /* For date picker */
-.rdp {
+/* 课程中使用的是 "react-day-picker": "^8.10.1", */
+/* .rdp-root {
   --rdp-cell-size: 32px !important;
   --rdp-accent-color: var(--color-accent-500) !important;
   --rdp-background-color: var(--color-accent-600) !important;
   margin: 0 !important;
+} */
+/* 自己使用的是 "react-day-picker": "^9.14.0", */
+/* 需要参考 https://daypicker.dev/docs/styling 对应修改如下: */
+.rdp-root {
+  --rdp-accent-color: var(--color-accent-500) !important;
+  --rdp-accent-background-color: var(--color-accent-600) !important;
+  margin: 0 !important;
+}
+.rdp-day {
+  --rdp-day-height: 32px;
+  --rdp-day-width: 32px;
+}
+.rdp-day_button {
+  --rdp-day_button-height: 30px;
+  --rdp-day_button-width: 30px;
 }

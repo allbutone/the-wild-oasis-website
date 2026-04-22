@@ -3,6 +3,7 @@ import "@/app/_styles/globals.css";
 
 import { Josefin_Sans } from "next/font/google";
 import Header from "./_components/Header";
+import { ReservationContextProvider } from "./_components/ReservationContext";
 
 // Layout 中只会指定 <body> 而不会指定 <head>, 这是因为:
 // nextjs 会默认使用 exported variable 'metadata' 来生成 <head>
@@ -37,11 +38,18 @@ const josefin = Josefin_Sans({
 export default function Layout({ children }) {
   return (
     <html>
-      <body className={ `${josefin.className} antialiased bg-primary-950 text-primary-100 min-h-screen flex flex-col relative` }>
+      <body
+        className={`${josefin.className} antialiased bg-primary-950 text-primary-100 min-h-screen flex flex-col relative`}
+      >
         <Header />
         {/* 添加 class 'grid' 是为了占据 parent element (body) 的所有 vertical space */}
         <div className="flex-1 px-8 py-12 grid">
-          <main className="max-w-7xl mx-auto w-full">{children}</main>
+          <main className="max-w-7xl mx-auto w-full">
+            {/* ReservationContextProvider 是 client component  */}
+            {/* 其内不可以 import server component */}
+            {/* 但可以通过 prop(例如 prop 'children')来和 server component 进行组合 */}
+            <ReservationContextProvider>{children}</ReservationContextProvider>
+          </main>
         </div>
       </body>
     </html>

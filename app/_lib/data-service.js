@@ -97,6 +97,7 @@ export async function getBookings(guestId) {
   return data;
 }
 
+// 
 export async function getBookedDatesByCabinId(cabinId) {
   let today = new Date();
   today.setUTCHours(0, 0, 0, 0);
@@ -108,6 +109,14 @@ export async function getBookedDatesByCabinId(cabinId) {
     .select('*')
     .eq('cabinId', cabinId)
     .or(`startDate.gte.${today},status.eq.checked-in`);
+  // SQL 逻辑:
+  // 1. cabinId = cabinId and startDate >= today
+  //    cabin 在今天(含)之后的 bookings
+  // 2. cabinId = cabinId and status = 'checkin-in'
+  //    cabin 已经办理入住的 bookings
+  // 上述查询逻辑总觉的很奇怪, 如果要查询 cabin 已经预订的 dates, 最好这样:
+  // cabinId = cabinId and startDate <= today and endDate > today
+  // 即: cabin 的 bookings 中, 哪些的预订区间跨越了今天
 
   if (error) {
     console.error(error);

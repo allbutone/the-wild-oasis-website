@@ -1,9 +1,10 @@
-import Logo from "@/app/_components/Logo";
-import TextExpander from "@/app/_components/TextExpander";
 import { getCabin, getCabins } from "@/app/_lib/data-service";
-import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
 import { notFound } from "next/navigation";
+import Reservation from "../../_components/Reservation";
+import { Suspense } from "react";
+import Spinner from "@/app/_components/Spinner";
+import ReservationReminder from "../../_components/ReservationReminder";
+import CabinDescription from "../../_components/CabinDescription";
 
 export async function generateStaticParams() {
   const cabins = await getCabins();
@@ -46,64 +47,33 @@ export default async function Page({ params }) {
     // 也就是说: 执行 notFound() 后, 会展示 not-found.js 的内容
     notFound();
   }
-  const { id, name, maxCapacity, regularPrice, discount, image, description } =
-    cabin;
 
   return (
     <div className="max-w-6xl mx-auto mt-8">
-      <div className="grid grid-cols-[3fr_4fr] gap-20 border border-primary-800 py-3 px-10 mb-24">
-        <div className="relative scale-[1.15] -translate-x-3">
-          <Image
-            fill
-            className="object-cover"
-            src={image}
-            alt={`Cabin ${name}`}
-          />
-        </div>
-
-        <div>
-          <h3 className="text-accent-100 font-black text-7xl mb-5 translate-x-[-254px] bg-primary-950 p-6 pb-1 w-[150%]">
-            Cabin {name}
-          </h3>
-
-          <p className="text-lg text-primary-300 mb-10">
-            <TextExpander>{description}</TextExpander>
-          </p>
-
-          {/* Logo 没有显式标注 'use client' 'use server', 那么: */}
-          {/* 如果在 client context 内 import <Logo /> 的话, Logo 就是 client component */}
-          {/* 如果在 server context 内 import <Logo /> 的话, Logo 就是 server component */}
-          {/* <Logo /> */}
-
-          <ul className="flex flex-col gap-4 mb-7">
-            <li className="flex gap-3 items-center">
-              <UsersIcon className="h-5 w-5 text-primary-600" />
-              <span className="text-lg">
-                For up to <span className="font-bold">{maxCapacity}</span>{" "}
-                guests
-              </span>
-            </li>
-            <li className="flex gap-3 items-center">
-              <MapPinIcon className="h-5 w-5 text-primary-600" />
-              <span className="text-lg">
-                Located in the heart of the{" "}
-                <span className="font-bold">Dolomites</span> (Italy)
-              </span>
-            </li>
-            <li className="flex gap-3 items-center">
-              <EyeSlashIcon className="h-5 w-5 text-primary-600" />
-              <span className="text-lg">
-                Privacy <span className="font-bold">100%</span> guaranteed
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
+      <CabinDescription cabin={cabin} />
       <div>
-        <h2 className="text-5xl font-semibold text-center">
-          Reserve today. Pay on arrival.
+        <h2 className="text-5xl font-semibold text-center text-accent-400 mb-10">
+          Reserve {cabin.name} today. Pay on arrival.
         </h2>
+        {/* 
+          第一种查询方式:
+            parent component(例如 Page) 将 cabin 以 prop 形式传递给 child component(例如 Reservation)
+            Reservation 下谁需要 cabin 都可以直接使用, 无需查询 -> 最终只查询一次 cabin
+          第二种查询方式:
+            parent component(例如 Page) 不将 cabin 以 prop 形式传递给 child component (例如 Reservation)
+            Reservation 下谁需要 cabin 谁自己查询 -> cabin 被用到多少次, 就查询多少次
+            但得益于 request memoization 的 de-dup 机制, 最终也是只查询一次 cabin 
+          */}
+        {/* 下面使用第一种查询方式: */}
+        {/* 
+          如果不添加如下 Suspense, 就会默认使用 loading.js 这个 page-level 的 Suspense, 导致: 
+          如果 Reservation 内的数据没有加载完毕, Page 内除 Reservation 外的其他信息也
+          无法展示, 只能看到 page-level loading spinner 
+        */}
+        <Suspense fallback={<Spinner />}>
+          <Reservation cabin={cabin} />
+          <ReservationReminder />
+        </Suspense>
       </div>
     </div>
   );
