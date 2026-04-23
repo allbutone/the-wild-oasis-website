@@ -1,6 +1,8 @@
 import DateSelector from "@/app/_components/DateSelector";
 import ReservationForm from "@/app/_components/ReservationForm";
 import { getBookedDatesByCabinId, getSettings } from "@/app/_lib/data-service";
+import { auth } from "@/auth.js";
+import LoginMessage from "./auth/LoginMessage.js";
 
 // 该组件是一个 server component, 负责加载数据, 给所 return 的 client component 使用
 export default async function Reservation({ cabin }) {
@@ -13,6 +15,9 @@ export default async function Reservation({ cabin }) {
     getBookedDatesByCabinId(cabin.id),
   ]);
 
+  // 获取 google oauth 认证后的 session info
+  const session = await auth();
+
   return (
     <div className="grid grid-cols-2 border border-primary-800 min-h-[400px]">
       {/* 需要用到 settings 中的信息: minBookingLength(最小预定天数) / maxBookingLength(最大预订天数) */}
@@ -24,7 +29,11 @@ export default async function Reservation({ cabin }) {
         bookedDates={bookedDates}
       />
       {/* 需要用到 cabin 中的信息: maxCapacity(cabin 最多容纳多少人) */}
-      <ReservationForm cabin={cabin} />
+      {session?.user ? (
+        <ReservationForm cabin={cabin} currentUser={session.user} />
+      ) : (
+        <LoginMessage />
+      )}
     </div>
   );
 }
