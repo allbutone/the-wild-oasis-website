@@ -7,7 +7,7 @@ import Image from "next/image.js";
 export default async function Navigation() {
   // 获取通过 google oauth 后, 得到的 session 信息
   const session = await auth();
-  console.log(session);
+  // console.log(session);
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">

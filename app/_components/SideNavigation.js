@@ -29,7 +29,7 @@ const navLinks = [
 function SideNavigation() {
   // usePathname 是 next.js 提供的 hook, 为了使用这个 hook, 需要将 SideNavigation 转换为 client component
   const pathname = usePathname();
-  console.log(pathname);
+  // console.log(pathname);
 
   return (
     <nav className='border-r border-primary-900'>
