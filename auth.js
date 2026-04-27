@@ -10,17 +10,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({auth, request}){
-      console.log('auth -> ', auth); // 其实 auth 就是 await auth 所返回的值: session
-      if(auth){// 如果认证通过, 就授权通过
-        return NextResponse.next(); // 表示 continue routing to target route
+    // 定义授权规则, 当 auth 被用作 nextjs middleware/proxy 时
+    // 会执行 authorized 并根据其返回值决定是否授权
+    //
+    // 参考源码: packages/next-auth/src/lib/index.ts -> interface `NextAuthConfig` 可知参数如下:
+    // @param request: the request to be authorized, 类型为 NextRequest (from nextjs "next/server"), 是对 native Request 的扩展
+    // @param auth: the authenticated user or token, 类型为 Session (from nextauth "@auth/core/types")
+    authorized({request, auth}){
+      if(auth){
+        return NextResponse.next(); // 如果认证成功(已登录), 就授权
       }else{
-        // return NextResponse.redirect('/login', request.url); // 如果定义了 custom login page
-        // 如果未定义 custom login page, 就直接 return false, 这样 next.js 会
-        // GET http://localhost:3000/api/auth/signin?callbackUrl={被拦截的URL}
-        // 重定向到 next.js 默认的 login page
-        return false; 
+        return false; // 否则(未登录), 就不授权
       }
     }
+  },
+  // 指定 custom signIn/signOut/error page
+  pages: {
+    //使用 route '/login' 对应的 page 作为 login page
+    signIn: '/login', //defaults to '/signin', 参考源码: core/src/index.ts -> interface PagesOptions
   }
 });

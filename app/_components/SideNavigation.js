@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/solid';
 import SignOutButton from './SignOutButton';
 import { usePathname } from 'next/navigation';
+import { signOutAction } from '../_lib/action.js';
 
 const navLinks = [
   {
@@ -47,7 +48,7 @@ function SideNavigation() {
         ))}
 
         <li className='mt-auto'>
-          <SignOutButton />
+          <form action={signOutAction}><SignOutButton /></form>
         </li>
       </ul>
     </nav>

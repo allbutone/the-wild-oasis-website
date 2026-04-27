@@ -47,15 +47,15 @@ export default async function Navigation() {
             <span>Account/Guest area</span>
           </Link>
         </li>
-        {session?.user ? (
-          <li>
-            <SignOut />
-          </li>
-        ) : (
-          <li>
-            <SignIn />
-          </li>
-        )}
+        {/* {session?.user ? ( */}
+        {/*   <li> */}
+        {/*     <SignOut /> */}
+        {/*   </li> */}
+        {/* ) : ( */}
+        {/*   <li> */}
+        {/*     <SignIn /> */}
+        {/*   </li> */}
+        {/* )} */}
       </ul>
     </nav>
   );
