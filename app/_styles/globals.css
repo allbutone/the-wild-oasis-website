@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@layer base {
+  button {
+    cursor: pointer;
+    &:is(:disabled) {
+      cursor: not-allowed;
+    }
+  }
+}
+
 /* 在 tailwind v4 中, 调整色系, 方式一: */
 /* 在 tailwind.config.js 通过 theme.extend.colors 调整 */
 /* 然后通过 @config 引入, 如下:  */
