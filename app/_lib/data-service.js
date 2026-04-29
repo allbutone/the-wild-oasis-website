@@ -170,7 +170,7 @@ export async function createGuest(newGuest) {
     throw new Error('Guest could not be created');
   }
 
-  console.log(`new row created in table 'guests':`, data);
+  // console.log(`new row created in table 'guests':`, data);
   return data[0];
 }
 

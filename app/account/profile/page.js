@@ -1,13 +1,14 @@
-import CountrySelector from "@/app/_components/CountrySelector";
 import SelectCountry from "@/app/_components/SelectCountry";
+import UpdateProfileForm from "@/app/_components/UpdateProfileForm.js";
+import { getGuest } from "@/app/_lib/data-service.js";
+import { auth } from "@/auth.js";
 
 export const metadata = {
   title: "profile page",
 };
-export default function Page() {
-  // CHANGE
-  const countryFlag = "pt.jpg";
-  const nationality = "portugal";
+export default async function Page() {
+  const session = await auth();
+  const guest = await getGuest(session.user.email);
 
   return (
     <div>
@@ -20,63 +21,20 @@ export default function Page() {
         faster and smoother. See you soon!
       </p>
 
-      <form className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
-        <div className="space-y-2">
-          <label>Full name</label>
-          <input
-            disabled
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label>Email address</label>
-          <input
-            disabled
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label htmlFor="nationality">Where are you from?</label>
-            <img
-              src={countryFlag}
-              alt="Country flag"
-              className="h-5 rounded-sm"
-            />
-          </div>
-
-          {/* 前提:  */}
-          {/* CountrySelector 是 client component */}
-          {/* SelectCountry 是 server component */}
-          {/* 验证: */}
-          {/* client component 不能 import server component */}
-          {/* 但是 client component 可以组合 server component (通过 props) */}
-          <CountrySelector>
-            <SelectCountry
-              name="nationality"
-              id="nationality"
-              className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-              defaultCountry={nationality}
-            />
-          </CountrySelector>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="nationalID">National ID number</label>
-          <input
-            name="nationalID"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-          />
-        </div>
-
-        <div className="flex justify-end items-center gap-6">
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-            Update profile
-          </button>
-        </div>
-      </form>
+      {/* client component UpdateProfileForm */}
+      {/* <UpdateProfileForm guest={guest} > */}
+      {/* 上行会出现问题: 修改 nationality 和 nationalID 并提交表单后
+      界面 nationality 没有维持指定的值, 而是回退到 defaultValue */}
+      {/* 添加 prop 'key' 如下即可解决问题, 但不知道为什么, 问了一圈 AI, 解释的没有一个满意的 */}
+      <UpdateProfileForm guest={guest} key={guest.nationality}>
+        {/* server component `SelectCountry` */}
+        <SelectCountry
+          name="nationality"
+          id="nationality"
+          className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+          defaultValue={guest.nationality}
+        />
+      </UpdateProfileForm>
     </div>
   );
 }
