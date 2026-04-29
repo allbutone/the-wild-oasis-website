@@ -1,6 +1,7 @@
 import ReservationCard from "@/app/_components/ReservationCard";
 import { getBookings } from "@/app/_lib/data-service.js";
 import { auth } from "@/auth.js";
+import Link from "next/link.js";
 
 export const metadata = {
   title: "reservations page",
@@ -8,8 +9,6 @@ export const metadata = {
 export default async function Page() {
   const session = await auth();
   const bookings = await getBookings(session.user.guestId);
-  // console.log(`bookings`, bookings);
-  // console.log(`guest id:`, session.user.guestId);
 
   return (
     <div>
@@ -20,9 +19,9 @@ export default async function Page() {
       {bookings.length === 0 ? (
         <p className="text-lg">
           You have no reservations yet. Check out our{" "}
-          <a className="underline text-accent-500" href="/cabins">
+          <Link className="underline text-accent-500" href="/cabins">
             luxury cabins &rarr;
-          </a>
+          </Link>
         </p>
       ) : (
         <ul className="space-y-6">
