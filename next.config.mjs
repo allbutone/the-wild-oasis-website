@@ -23,7 +23,7 @@ const nextConfig = {
   //    这是因为 `next start` 需要搭配 `output: undefined`, 而非 `output: 'export'`
   //
   // output: 'export', // for SSG
-  output: undefined, // for SSR + ISR
+  // output: undefined, // for SSR + ISR
 
   images: {
     // Image 需要 server side API 的支持, 因此, 如果使用 SSG 的话, 就得:

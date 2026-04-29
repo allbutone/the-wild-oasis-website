@@ -1,8 +1,50 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "@/auth.js";
-import { deleteBooking, getBookings, updateGuest } from "./data-service.js";
+import {
+  deleteBooking,
+  getBookings,
+  updateBooking,
+  updateGuest,
+} from "./data-service.js";
 import { revalidatePath } from "next/cache.js";
+
+export async function updateBookingAction(formData) {
+  const session = await auth();
+  // 权限检查
+  if (!session.user)
+    throw new Error("you must be logged in to perform this action!!");
+
+  const bookingId = formData.get("bookingId");
+  // 参数检查: 只能更新自己的 booking
+  const bookings = await getBookings(session.user.guestId);
+  const bookingIds = bookings.map((b) => b.id);
+  console.log(`current user id: `, session.user.guestId);
+  console.log(`current booking id: `, bookingId, ` of type: `, typeof bookingId);
+  console.log(`bookingIds:`, bookingIds, ` of type: `, typeof bookingIds[0]);
+  if (!bookingIds.includes(Number(bookingId)))
+    throw new Error("you are not allowed to update this booking!!");
+
+  const updatePayload = {
+    id: bookingId,
+    numGuests: formData.get("numGuests"),
+    observations: formData.get("observations"),
+  };
+  console.log(`updatePayload: `, updatePayload);
+  await updateBooking(bookingId, updatePayload);
+
+  // 在 route '/account/reservations/[bookingId]' 点击 button 'update reservation'
+  // 执行 server action 发出 POST /account/reservations/[bookingId] 请求
+  // 请求完毕后, 应:
+  // 1. 更新 cache
+  revalidatePath("/account/reservations"); // 预订列表应发生变化
+  revalidatePath(`/account/reservations/edit/${bookingId}`); // 当前预订也应发生变化
+  revalidatePath('/', 'layout');
+  
+  // 2. 然后跳转(redirect) 到 route '/account/reservations'
+  redirect("/account/reservations");
+}
 
 export async function deleteBookingAction(bookingId) {
   const session = await auth();
@@ -17,7 +59,7 @@ export async function deleteBookingAction(bookingId) {
 
   await deleteBooking(bookingId);
 
-  revalidatePath('/account/reservations');
+  revalidatePath("/account/reservations");
 }
 
 export async function signInAction() {
