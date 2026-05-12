@@ -1,10 +1,9 @@
-"use cache";
+// "use cache";
 
 import about1 from "@/public/about-1.jpg";
 import about2 from "@/public/about-2.jpg";
 import Image from "next/image";
-import { getCabins } from "../_lib/data-service";
-import { cacheLife } from "next/cache";
+import { getCabins } from "../_lib/data-service.js";
 
 export const metadata = {
   title: "about",
@@ -16,7 +15,7 @@ export default async function Page() {
   // 在 browser devtools 的 tab 'network' 里观察 '/about' 的 response header, 会发现:
   // Cache-Control 的值为 "s-maxage=3600, stale-while-revalidate=82800"
   // 其中 s-maxage=3600 说明 cache profile 'hours'
-  cacheLife('hours');
+  // cacheLife('hours');
 
   const cabins = await getCabins();
 

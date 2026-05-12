@@ -3,10 +3,10 @@
 // "use cache"; // must be at the top of the file // Page 使用了 prop 'searchParam' 后, 就被标记为 dynamic route 了, 此时无法搭配 'use cache' 使用, 否则报错
 
 import { Suspense } from "react";
-import CabinList from "./CabinList";
-import Spinner from "../_components/Spinner";
+import CabinList from "./CabinList.js";
+import Spinner from "../_components/Spinner.js";
 // import { cacheLife } from "next/cache"; // Page 使用了 prop 'searchParam' 后, 就被标记为 dynamic route 了, 此时无法搭配 'use cache' 使用, 否则报错
-import FilterByCapacity from "./FilterByCapacity";
+import FilterByCapacity from "./FilterByCapacity.js";
 
 export const metadata = {
   title: "cabins",

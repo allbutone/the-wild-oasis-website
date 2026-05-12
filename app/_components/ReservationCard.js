@@ -1,8 +1,8 @@
-import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { format, formatDistance, isPast, isToday, parseISO } from "date-fns";
-import DeleteReservation from "./DeleteReservation";
 import Image from "next/image.js";
-import Link from "next/link.js";
+import EditReservation from "./EditReservation.js";
+import { deleteBookingAction, updateBookingAction } from "../_lib/action.js";
+import DeleteReservation from "./DeleteReservation.js";
 
 export const formatDistanceFromNow = (dateStr) =>
   formatDistance(parseISO(dateStr), new Date(), {
@@ -70,21 +70,19 @@ function ReservationCard({ booking }) {
         </div>
       </div>
 
-      <div className="flex flex-col border-l border-primary-800 min-w-[100px]">
+      {/* react 扩展了 form 的功能 */}
+      {/* - 当 prop 'action' 是 URL 时, 其行为和 native form 一致 */}
+      {/* - 当 prop 'action' 是 function 时, 该 function 会被包裹在 startTransition 内调用, 且唯一实参为 formData */}
+      <form action={deleteBookingAction} className="flex flex-col border-l border-primary-800 min-w-[100px]" >
+        <input type="hidden" name="bookingId" defaultValue={id} />
         {/* isPast(new Date(startDate)) 意思是: 过了 startDate 仍未 check in 的 booking, 即: 过期的预订 */}
-        {
-          isPast(new Date(startDate)) ? null : <>
-            <Link
-              href={`/account/reservations/edit/${id}`}
-              className="group flex items-center gap-2 uppercase text-xs font-bold text-primary-300 border-b border-primary-800 flex-grow px-3 hover:bg-accent-600 transition-colors hover:text-primary-900"
-            >
-              <PencilSquareIcon className="h-5 w-5 text-primary-600 group-hover:text-primary-800 transition-colors" />
-              <span className="mt-1">Edit</span>
-            </Link>
-            <DeleteReservation bookingId={id} />
+        {isPast(new Date(startDate)) ? null : (
+          <>
+            <EditReservation bookingId={id} />
+            <DeleteReservation />
           </>
-        }
-      </div>
+        )}
+      </form>
     </div>
   );
 }

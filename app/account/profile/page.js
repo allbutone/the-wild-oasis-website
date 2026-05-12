@@ -1,4 +1,4 @@
-import SelectCountry from "@/app/_components/SelectCountry";
+import SelectCountry from "@/app/_components/SelectCountry.js";
 import UpdateProfileForm from "@/app/_components/UpdateProfileForm.js";
 import { getGuest } from "@/app/_lib/data-service.js";
 import { auth } from "@/auth.js";
@@ -22,11 +22,7 @@ export default async function Page() {
       </p>
 
       {/* client component UpdateProfileForm */}
-      {/* <UpdateProfileForm guest={guest} > */}
-      {/* 上行会出现问题: 修改 nationality 和 nationalID 并提交表单后
-      界面 nationality 没有维持指定的值, 而是回退到 defaultValue */}
-      {/* 添加 prop 'key' 如下即可解决问题, 但不知道为什么, 问了一圈 AI, 解释的没有一个满意的 */}
-      <UpdateProfileForm guest={guest} key={guest.nationality}>
+      <UpdateProfileForm guest={guest} >
         {/* server component `SelectCountry` */}
         <SelectCountry
           name="nationality"

@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "@/auth.js";
 import {
   deleteBooking,
@@ -8,45 +7,41 @@ import {
   updateBooking,
   updateGuest,
 } from "./data-service.js";
-import { revalidatePath } from "next/cache.js";
+import { refresh, revalidatePath, updateTag } from "next/cache.js";
 
-export async function updateBookingAction(formData) {
+// server action 充当 useActionState(reducerAction, initialState) 中的 reducerAction 时
+// server action 的实参列表会变成: (previousBooking, formData)
+export async function updateBookingAction(previousBooking, formData) {
   const session = await auth();
   // 权限检查
   if (!session.user)
     throw new Error("you must be logged in to perform this action!!");
 
-  const bookingId = formData.get("bookingId");
   // 参数检查: 只能更新自己的 booking
   const bookings = await getBookings(session.user.guestId);
   const bookingIds = bookings.map((b) => b.id);
-  console.log(`current user id: `, session.user.guestId);
-  console.log(`current booking id: `, bookingId, ` of type: `, typeof bookingId);
-  console.log(`bookingIds:`, bookingIds, ` of type: `, typeof bookingIds[0]);
-  if (!bookingIds.includes(Number(bookingId)))
+
+  const targetBookingId = formData.get("bookingId");
+  if (!bookingIds.includes(Number(targetBookingId)))
     throw new Error("you are not allowed to update this booking!!");
 
-  const updatePayload = {
-    id: bookingId,
+  const updatedBooking = await updateBooking(targetBookingId, {
     numGuests: formData.get("numGuests"),
     observations: formData.get("observations"),
-  };
-  console.log(`updatePayload: `, updatePayload);
-  await updateBooking(bookingId, updatePayload);
+  });
 
-  // 在 route '/account/reservations/[bookingId]' 点击 button 'update reservation'
-  // 执行 server action 发出 POST /account/reservations/[bookingId] 请求
-  // 请求完毕后, 应:
-  // 1. 更新 cache
-  revalidatePath("/account/reservations"); // 预订列表应发生变化
-  revalidatePath(`/account/reservations/edit/${bookingId}`); // 当前预订也应发生变化
-  revalidatePath('/', 'layout');
-  
-  // 2. 然后跳转(redirect) 到 route '/account/reservations'
-  redirect("/account/reservations");
+  // 将 server action 执行成功与否的 flag 'success' 合并到 `updatedBooking` 中
+  // 以便可以根据 updatedBooking.success 在 effect 中按需 redirect
+  /* return {
+    ...updatedBooking,
+    success: true
+  }; */
+  console.log(`setting update flat 'success' to true`);
+  updatedBooking.success = true;
+  return updatedBooking;
 }
 
-export async function deleteBookingAction(bookingId) {
+export async function deleteBookingAction(formData) {
   const session = await auth();
   // 权限检查
   if (!session.user)
@@ -54,12 +49,18 @@ export async function deleteBookingAction(bookingId) {
   // 参数检查
   const guestBookings = await getBookings(session.user.guestId); // 查询 user 拥有的 bookings
   const guestBookingIds = guestBookings.map((b) => b.id);
-  if (!guestBookingIds.includes(bookingId))
+
+  const id = Number(formData.get("bookingId"));
+  if (!guestBookingIds.includes(id))
     throw new Error("you are not allowed to delete this booking!");
 
-  await deleteBooking(bookingId);
+  await deleteBooking(id);
 
-  revalidatePath("/account/reservations");
+  // server action 不会自动刷新 current route, 只能:
+  // 方式一: client request new RSC payload from server
+  // refresh(); // 适合: current route 范围内未使用 'use cache'
+  // 方式二: invalidate route cache + client request new RSC payload from server
+  revalidatePath('/account/reservations'); // current route 范围内无论是否使用了 'use cache' 都适用
 }
 
 export async function signInAction() {
@@ -72,6 +73,8 @@ export async function signOutAction() {
   await signOut({ redirectTo: "/" });
 }
 
+// react 重写了 form 的行为:
+// 当 prop 'action' 的值为 function 时, 其唯一实参为 formData
 export async function updateProfileAction(formData) {
   const session = await auth();
 
@@ -104,7 +107,9 @@ export async function updateProfileAction(formData) {
     countryFlag,
   });
 
-  // 上述 update logic 成功后, 由于 client side router cache 的缘故, 导致 UI 没有同步更新
-  // 为此需要手动更新缓存如下:
-  revalidatePath("/account/profile");
+  // server action 不会自动刷新 current route, 只能:
+  // 方式一: client request new RSC payload from server
+  // refresh(); // 适合: current route 范围内未使用 'use cache'
+  // 方式二: invalidate route cache + client request new RSC payload from server
+  revalidatePath('/account/profile'); // current route 范围内无论是否使用了 'use cache' 都适用
 }

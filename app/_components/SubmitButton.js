@@ -3,6 +3,7 @@
 import { useFormStatus } from "react-dom";
 
 export default function SubmitButton() {
+  // useFormStatus 已经 deprecated, 推荐使用 useTransition 或 useActionState
   const { pending } = useFormStatus();
 
   return (

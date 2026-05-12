@@ -1,5 +1,6 @@
 import { eachDayOfInterval } from 'date-fns';
 import supabase from './supabase';
+import { cacheTag } from 'next/cache.js';
 
 /////////////
 // GET
@@ -65,6 +66,7 @@ export async function getGuest(email) {
 }
 
 export async function getBooking(id) {
+  console.log(`get booking of id ${id}`)
   const { data, error, count } = await supabase
     .from('bookings')
     .select('*')
