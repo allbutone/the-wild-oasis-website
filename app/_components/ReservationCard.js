@@ -1,15 +1,15 @@
 import { format, formatDistance, isPast, isToday, parseISO } from "date-fns";
 import Image from "next/image.js";
 import EditReservation from "./EditReservation.js";
-import { deleteBookingAction, updateBookingAction } from "../_lib/action.js";
 import DeleteReservation from "./DeleteReservation.js";
+import { TrashIcon } from "@heroicons/react/24/solid";
 
 export const formatDistanceFromNow = (dateStr) =>
   formatDistance(parseISO(dateStr), new Date(), {
     addSuffix: true,
   }).replace("about ", "");
 
-function ReservationCard({ booking }) {
+function ReservationCard({ booking, onBookingDelAction }) {
   const {
     id,
     guestId,
@@ -73,13 +73,26 @@ function ReservationCard({ booking }) {
       {/* react 扩展了 form 的功能 */}
       {/* - 当 prop 'action' 是 URL 时, 其行为和 native form 一致 */}
       {/* - 当 prop 'action' 是 function 时, 该 function 会被包裹在 startTransition 内调用, 且唯一实参为 formData */}
-      <form action={deleteBookingAction} className="flex flex-col border-l border-primary-800 min-w-[100px]" >
+      <form
+        action={onBookingDelAction}
+        className="flex flex-col border-l border-primary-800 min-w-[100px]"
+      >
         <input type="hidden" name="bookingId" defaultValue={id} />
         {/* isPast(new Date(startDate)) 意思是: 过了 startDate 仍未 check in 的 booking, 即: 过期的预订 */}
         {isPast(new Date(startDate)) ? null : (
           <>
             <EditReservation bookingId={id} />
-            <DeleteReservation />
+
+            {/* 使用 useFormStatus 来更新 ReservationList UI:  */}
+            {/* 删除 reservation 过程中, ReservationCard 的 delete button 展示 spinner */}
+            {/* <DeleteReservation /> */}
+
+            {/* 使用 useOptimistic 来更新 ReservationList UI:  */}
+            {/* 删除 reservation 过程刚开始时, 直接将 ReservationCard 从 UI 去除 */}
+            <button className="group flex items-center gap-2 uppercase text-xs font-bold text-primary-300 flex-grow px-3 hover:bg-accent-600 transition-colors hover:text-primary-900">
+              <TrashIcon className="h-5 w-5 text-primary-600 group-hover:text-primary-800 transition-colors" />
+              <span className="mt-1">Delete</span>
+            </button>
           </>
         )}
       </form>
