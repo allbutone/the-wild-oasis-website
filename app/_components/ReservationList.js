@@ -8,18 +8,13 @@ import { deleteBookingAction } from "../_lib/action.js";
 export default function ReservationList({ bookings }) {
   const [optimisticBookings, setOptimistic] = useOptimistic(
     bookings,
-    (currentBookings, id) => {
-      // 根据真实的 currentBookings 和 setOptimistic 传来的 id 来计算 optimisticBookings
-      console.log(`currentBookings:`, currentBookings);
-      console.log(`id:`, id);
-      const result = currentBookings.filter((b) => b.id !== id);
-
-      console.log(`new optimistic bookings:`, result);
-      return result;
+    // updater fn
+    (currentOptimisticBookings, id) => {
+      return currentOptimisticBookings.filter((b) => b.id !== id);
     },
   );
 
-  // 根据 Action props 的约定: 将 deleteBookAction 作为 prop 'action' 传给目标组件
+  // 根据 Action props 的约定: 将 onBookingDelAction 作为 prop 'action' 传给目标组件
   // 目标组件应确保以 startTransition(action) 的形式执行 action
   async function onBookingDelAction(formData) {
     const id = Number(formData.get("bookingId"));
@@ -29,17 +24,21 @@ export default function ReservationList({ bookings }) {
     // 可以在 client component 中调用 server action 'deleteBookingAction' 但不能调用 server function `deleteBooking`
     await deleteBookingAction(formData);
     // onBookingDelAction 执行过程, 分两种情况:
-    // - Transition 失败
-    //   - optimisticBookings 为 expected new bookings
-    //   - await deleteBookingAction(formData) 失败, Transition 失败
-    //   - optimisticBookings 回退为 old bookings
+    // - case-1:
+    //   1. optimisticBookings 为 expected new bookings
+    //   2. await deleteBookingAction(formData) 失败, Transition 结束
+    //   3. optimisticBookings 回退为 prop 'bookings' (old bookings)
     //
-    // - Transiton 成功
-    //   - optimisticBookings 为 expected new bookings
-    //   - await deleteBookingAction(formData) 成功, Transition 成功
-    //     - 如果 bookings 是 state, 应在 await deleteBookingAction(formData) 后执行 setBookings(latestBookings);
-    //     - 如果 bookings 是 prop, 确保 deleteBookingAction 内会 revalidate current route 来 update prop 'bookings' to latest
-    //   - optimisticBookings 和 new bookings 一致, 都是 latest bookings
+    // - case-2:
+    //   1. optimisticBookings 为 expected new bookings
+    //   2. await deleteBookingAction(formData) 成功, Transition 结束
+    //     - 如果 bookings 是 state, 应在 await deleteBookingAction(formData) 后 update state to latest:
+    //       startTransition(() => {
+    //           setBookings(latestBookings); // await statement 后的异步 state update 应额外包裹 startTransition
+    //       }) ;
+    //     - 如果 bookings 是 prop, 应确保 deleteBookingAction 会 re-render parent component 来 update prop to latest:
+    //       例如: 在 deleteBookingAction 内执行 revalidatePath('currentRoute') 来 re-render parent component
+    //   3. optimisticBookings 和 state/prop 'bookings' 一致, 都是 latest bookings
   }
 
   return (

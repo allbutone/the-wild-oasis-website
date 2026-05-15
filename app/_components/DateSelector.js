@@ -17,7 +17,7 @@ function isAlreadyBooked(range, datesArr) {
 }
 
 function DateSelector({ cabin, bookedDates, settings }) {
-  console.log(`cabin ${cabin.id} 已经被预订的日期有: `, bookedDates);
+  // console.log(`cabin ${cabin.id} 已经被预订的日期有: `, bookedDates);
 
   const { range, setRange, resetRange } = useReservation();
 
@@ -36,13 +36,11 @@ function DateSelector({ cabin, bookedDates, settings }) {
   // const numNights = 23; // guest 预订多少晚
   // const cabinPrice = 23; // guest 预订后, 计算的总价
   const { regularPrice, discount } = cabin;
-  console.log(`range from ${range.from} to ${range.to}`);
+  // console.log(`range from ${range.from} to ${range.to}`);
   const numNights = differenceInDays(range.to, range.from);
   const cabinPrice = numNights * (regularPrice - discount);
 
   // 从 setting 中查到的信息:
-  // const minBookingLength = 1;
-  // const maxBookingLength = 3;
   const { minBookingLength, maxBookingLength } = settings;
   // console.log("minBookingLength", minBookingLength);
   // console.log("maxBookingLength", maxBookingLength);

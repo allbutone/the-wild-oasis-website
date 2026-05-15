@@ -55,7 +55,7 @@ export default function UpdateProfileForm({
       </div>
 
       <div className="flex justify-end items-center gap-6">
-        <SubmitButton />
+        <SubmitButton pendingText={"Updating..."}>Update Profile</SubmitButton>
       </div>
     </form>
   );

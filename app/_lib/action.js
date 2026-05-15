@@ -2,12 +2,48 @@
 
 import { auth, signIn, signOut } from "@/auth.js";
 import {
+  createBooking,
   deleteBooking,
   getBookings,
   updateBooking,
   updateGuest,
 } from "./data-service.js";
 import { refresh, revalidatePath, updateTag } from "next/cache.js";
+import { differenceInDays } from "date-fns";
+import { redirect, RedirectType } from 'next/navigation'
+
+export async function createBookingAction(currentUser, cabin, range, formData){
+  const { regularPrice, discount } = cabin;
+  const numNights = differenceInDays(range.to, range.from);
+  const cabinPrice = numNights * (regularPrice - discount);
+  const newBooking = {
+    startDate: range.from,
+    endDate: range.to,
+    numNights,
+    numGuests: Number(formData.get('numGuests')), 
+    cabinPrice,
+    extrasPrice: 0,
+    totalPrice: cabinPrice,
+    status: "unconfirmed",
+    hasBreakfast: false,
+    isPaid: false,
+    observations: formData.get('observations'), 
+    guestId: currentUser.guestId,
+    cabinId: cabin.id,
+  };
+  // console.log(newBooking);
+
+  const createdBooking = await createBooking(newBooking);
+  // 预订成功后: 
+  // 1. cabin 的 bookedDates 必然发生变化
+  // 需要刷新如下, 才可让 current route 加载 latest bookedDates
+  // 否则 createdBooking 对应的 range 在界面仍然可选(没有 disable)
+  revalidatePath(`/cabins/${cabin.id}`);
+  // 2. 跳转到 reservation list page
+  redirect('/account/reservations');
+
+  // return createdBooking;
+}
 
 // server action 充当 useActionState(reducerAction, initialState) 中的 reducerAction 时
 // server action 的实参列表会变成: (previousBooking, formData)

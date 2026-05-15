@@ -1,12 +1,23 @@
 "use client";
 
-import { useReservation } from "./ReservationContext";
+import { useReservation } from "./ReservationContext.js";
+import { createBookingAction } from "../_lib/action.js";
+import SubmitButton from "./SubmitButton.js";
 
 function ReservationForm({ cabin, currentUser }) {
-  // CHANGE
-  // const maxCapacity = 23;
   const { maxCapacity } = cabin;
-  const { range } = useReservation();
+  const { range, setRange, resetRange } = useReservation();
+
+  // - 如果指定 formAction={createBookingAction}:
+  //    createBookingAction 只会收到一个实参 formData, 无法得到 newBooking 所需的全部信息
+  // - 参考 https://nextjs.org/docs/13/app/building-your-application/data-fetching/server-actions-and-mutations#passing-additional-arguments 修改如下:
+  //    - const formAction=createBookingAction.bind(null, currentUser, cabin, range);// ${currentUser} booked ${cabin} for ${range} days
+  //    - formAction={formAction} // 当 form submission 发生时, 会调用 formAction, 继而调用 createBookingAction, 并:
+  //       - 使用 null 作为 this
+  //       - 传递的实参列表为: (currentUser, cabin, range, formData)
+  //
+  // ${currentUser} booked ${cabin} for ${range} days
+  const formAction = createBookingAction.bind(null, currentUser, cabin, range);
 
   return (
     <div className="scale-[1.01]">
@@ -25,7 +36,14 @@ function ReservationForm({ cabin, currentUser }) {
         </div> */}
       </div>
 
-      <form className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col">
+      <form
+        className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
+        action={async (formData) => {
+          await formAction(formData);
+          // 添加 reservation 成功后, 需要重置 context 中的 range
+          resetRange();
+        }}
+      >
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -60,11 +78,14 @@ function ReservationForm({ cabin, currentUser }) {
         </div>
 
         <div className="flex justify-end items-center gap-6">
-          <p className="text-primary-300 text-base">Start by selecting dates</p>
-
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-            Reserve now
-          </button>
+          {/* 即便是只预订一天, 也得选择 range.from 和 range.to */}
+          {range.from && range.to ? (
+            <SubmitButton pendingText={"Reserving"}>Reserve Now</SubmitButton>
+          ) : (
+            <p className="text-primary-300 text-base">
+              Start by selecting dates
+            </p>
+          )}
         </div>
       </form>
     </div>
