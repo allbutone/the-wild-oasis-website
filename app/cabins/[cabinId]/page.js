@@ -1,10 +1,11 @@
-import { getCabin, getCabins } from "@/app/_lib/data-service";
 import { notFound } from "next/navigation";
-import Reservation from "../../_components/Reservation";
 import { Suspense } from "react";
-import Spinner from "@/app/_components/Spinner";
-import ReservationReminder from "../../_components/ReservationReminder";
-import CabinDescription from "../../_components/CabinDescription";
+
+import { getCabin, getCabins } from "@/app/_lib/data-service.js";
+import Reservation from "../../_components/Reservation.js";
+import Spinner from "@/app/_components/Spinner.js";
+import ReservationReminder from "../../_components/ReservationReminder.js";
+import CabinDescription from "../../_components/CabinDescription.js";
 
 export async function generateStaticParams() {
   const cabins = await getCabins();

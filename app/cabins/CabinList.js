@@ -1,4 +1,4 @@
-import CabinCard from "../_components/CabinCard";
+import CabinCard from "../_components/CabinCard.js";
 import { getCabins } from "../_lib/data-service";
 
 // 在 route '/cabins' 对应的 Page 内可以通过 prop 'searchParams' 读取 search param 'capacityType' 的值

@@ -28,7 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // - signIn 的 hover doc
     // - https://next-auth.js.org/configuration/callbacks#sign-in-callback
     async signIn(params) {
-      const { user, account, profile } = params;
+      const { user, account, profile } = params; // 这个 params 其实就是 session
       /* {
         user: {
           id: '10b5d65a-249a-44d5-a3ed-89a2572afdd7',

@@ -1,10 +1,10 @@
 "use client";
 
-import { isWithinInterval } from "date-fns";
+import { differenceInDays, isSameDay, isWithinInterval } from "date-fns";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
-import { useReservation } from "./ReservationContext";
+import { useReservation } from "./ReservationContext.js";
 
 function isAlreadyBooked(range, datesArr) {
   return (
@@ -17,20 +17,35 @@ function isAlreadyBooked(range, datesArr) {
 }
 
 function DateSelector({ cabin, bookedDates, settings }) {
+  console.log(`cabin ${cabin.id} 已经被预订的日期有: `, bookedDates);
+
+  const { range, setRange, resetRange } = useReservation();
+
+  // 不允许选择的日期:
+  // - 今天之前的日期
+  // - bookedDates 中的日期(即: 已经被预订的日期)
+  //
+  // 存储在 context 内的 range 是被 all cabins 共享的, 因此可能出现如下情况:
+  // `cabin1 选择的 range` 和 `cabin2 已经预订的日期` overlap, 为此要处理如下:
+  const displayedRange = isAlreadyBooked(range, bookedDates) ? {} : range;
+  // 注意: 如果需要提交 reservation, 那么预订的日期应采用 displayedRange 而非 range
+
   // 从 cabin 中查到的信息:
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
+  // const regularPrice = 23; // 木屋每天的价格
+  // const discount = 23; // 木屋折扣(可从每天价格中扣除)
+  // const numNights = 23; // guest 预订多少晚
+  // const cabinPrice = 23; // guest 预订后, 计算的总价
+  const { regularPrice, discount } = cabin;
+  console.log(`range from ${range.from} to ${range.to}`);
+  const numNights = differenceInDays(range.to, range.from);
+  const cabinPrice = numNights * (regularPrice - discount);
 
   // 从 setting 中查到的信息:
   // const minBookingLength = 1;
   // const maxBookingLength = 3;
   const { minBookingLength, maxBookingLength } = settings;
-  console.log("minBookingLength", minBookingLength);
-  console.log("maxBookingLength", maxBookingLength);
-
-  const { range, setRange, resetRange } = useReservation();
+  // console.log("minBookingLength", minBookingLength);
+  // console.log("maxBookingLength", maxBookingLength);
 
   // 操作当日(今天)
   const today = new Date();
@@ -47,7 +62,7 @@ function DateSelector({ cabin, bookedDates, settings }) {
         //onSelect: Event callback when a date is selected
         //selected: The selected date(s).
         onSelect={handleSelect}
-        selected={range}
+        selected={displayedRange}
         // mode:
         // single: 只能选择一天
         // range: 可以选择从那天开始(from)/到哪天结束(to)
@@ -63,7 +78,14 @@ function DateSelector({ cabin, bookedDates, settings }) {
         // fromDate={new Date()}
         // 迁移到高版本, 需要指定为:
         // hidden={{ before: today }} // 不展示今天以前的 date
-        disabled={{ before: today }} // 不允许选择今天以前的 date
+        // 参考 https://daypicker.dev/selections/disabling-dates
+        disabled={[
+          { before: today }, // 不允许选择今天以前的 date
+          (targetDay) => {
+            // 如果已经预订的日期中, 已经有 targetDay, 就 disable (不让用户选择)
+            return bookedDates.some((someDay) => isSameDay(someDay, targetDay));
+          },
+        ]} 
         // toYear={new Date().getFullYear() + 5}
         // 迁移到高版本, 需要指定为:
         endMonth={new Date(today.getFullYear() + 1, today.getMonth())} //可选的结束月份

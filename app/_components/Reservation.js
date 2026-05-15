@@ -1,6 +1,6 @@
-import DateSelector from "@/app/_components/DateSelector";
-import ReservationForm from "@/app/_components/ReservationForm";
-import { getBookedDatesByCabinId, getSettings } from "@/app/_lib/data-service";
+import DateSelector from "@/app/_components/DateSelector.js";
+import ReservationForm from "@/app/_components/ReservationForm.js";
+import { getBookedDatesByCabinId, getSettings } from "@/app/_lib/data-service.js";
 import { auth } from "@/auth.js";
 import LoginMessage from "./auth/LoginMessage.js";
 
