@@ -1,5 +1,6 @@
 // import tailwind css file in order to use it.
 import "@/app/_styles/globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 import { Josefin_Sans } from "next/font/google";
 import Header from "./_components/Header";
@@ -51,6 +52,7 @@ export default function Layout({ children }) {
             <ReservationContextProvider>{children}</ReservationContextProvider>
           </main>
         </div>
+        <Analytics />
       </body>
     </html>
   );
